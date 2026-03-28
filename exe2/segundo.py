@@ -60,6 +60,7 @@ def menu():
             print("Saindo do sistema... Até logo!")
             conn.close()
             break
-        
-        if __name__ == "__main__":
-            menu()
+
+
+if __name__ == "__main__":
+    menu()
