@@ -13,7 +13,11 @@ def menu_alunos():
         if op == "1":
             nome = input("Nome: ")
             estilo = input("Estilo: ")
-            database.salvar_aluno(nome, estilo)
+            try    :
+                database.salvar_aluno(nome, estilo)
+                print("✅ Aluno cadastrado!")
+            except database as e:
+                print(f"❌ Erro ao cadastrar aluno: {e}")
         
         elif op == "2":
             alunos = database.listar_alunos()
@@ -89,3 +93,13 @@ def menu_principal():
 
 if __name__ == "__main__":
     menu_principal()
+    
+try:
+    id_aluno = int(input("Digite o ID do aluno: "))
+    id_prof = int(input("Digite o ID do professor: "))
+    
+    # Chama a função que está no outro arquivo
+    vincular_aluno(id_aluno, id_prof) 
+
+except ValueError:
+    print("Erro: Você precisa digitar um NÚMERO inteiro para o ID.")
