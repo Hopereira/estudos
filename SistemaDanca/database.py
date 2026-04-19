@@ -51,6 +51,15 @@ def listar_professores():
     conn.close()
     return dados
 
+def pesquisar_alunos(termo):
+    conn = sqlite3.connect('escola_danca.db')
+    cursor = conn.cursor()
+    filtro = f"%{termo}%"
+    cursor.execute("SELECT * FROM alunos WHERE nome LIKE ? OR estilo LIKE ?", (filtro, filtro))
+    dados = cursor.fetchall()
+    conn.close()
+    return dados
+
 def remover_aluno(id_aluno):
     conn = sqlite3.connect('escola_danca.db')
     cursor = conn.cursor()
