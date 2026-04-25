@@ -8,6 +8,7 @@ def menu_alunos():
         print("3. Remover Aluno")
         print("4. Atualizar Estilo")  # <--- Nova opção!
         print("0. Voltar")
+        
         op = input("Escolha: ")
 
         if op == "1":
@@ -76,16 +77,28 @@ def menu_principal():
         print("\n=== SISTEMA ESCOLA DE DANÇA ===")
         print("1. Gerenciar Alunos")
         print("2. Gerenciar Professores")
+        print("3. Pesquisar alunos")
         print("0. Sair")
-        opcao = input("Escolha: ")
+        opcao = input("Escolha uma das opções: ")
         
         if opcao == "1":
             menu_alunos()
         elif opcao == "2":
             menu_professores()
+            
+        elif opcao == "3":
+             termo_digitado_pelo_usuario = input("Digite o termo para pesquisa: ")
+             resultados = database.pesquisar_alunos(termo_digitado_pelo_usuario)
+             if resultados:
+                 print("\n--- RESULTADOS DA PESQUISA ---")
+                 for r in resultados:
+                     print(f"ID: {r[0]} | Nome: {r[1]} | Estilo: {r[2]}")
+               
+             
         elif opcao == "0":
             print("Saindo...")
             break
 
 if __name__ == "__main__":
     menu_principal()
+## Uma função para atualizar o estilo de um aluno
