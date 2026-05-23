@@ -13,7 +13,11 @@ def menu_alunos():
         if op == "1":
             nome = input("Nome: ")
             estilo = input("Estilo: ")
-            database.salvar_aluno(nome, estilo)
+            try:
+                database.salvar_aluno(nome, estilo)
+                print("✅ Aluno cadastrado!")
+            except database.AlunoDuplicadoError as e:
+                print(f"⚠️ {e}")
         
         elif op == "2":
             alunos = database.listar_alunos()

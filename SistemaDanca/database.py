@@ -1,5 +1,9 @@
 import sqlite3
 
+
+class AlunoDuplicadoError(Exception):
+    pass
+
 def iniciar_banco():
     conexao = sqlite3.connect('escola_danca.db')
     cursor = conexao.cursor()
@@ -24,6 +28,10 @@ def iniciar_banco():
 def salvar_aluno(nome, estilo):
     conn = sqlite3.connect('escola_danca.db')
     cursor = conn.cursor()
+    cursor.execute('SELECT 1 FROM alunos WHERE LOWER(nome) = LOWER(?)', (nome,))
+    if cursor.fetchone() is not None:
+        conn.close()
+        raise AlunoDuplicadoError(f"Aluno '{nome}' ja esta cadastrado.")
     cursor.execute('INSERT INTO alunos (nome, estilo) VALUES (?, ?)', (nome, estilo))
     conn.commit()
     conn.close()
