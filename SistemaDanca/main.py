@@ -173,6 +173,7 @@ def menu_principal():
         print("\n=== SISTEMA ESCOLA DE DANÇA ===")
         print("1. Gerenciar Alunos")
         print("2. Gerenciar Professores")
+        print("3. Relatórios Gerenciais")
         print("0. Sair")
         opcao = input("Escolha uma das opções: ")
         try:            
@@ -186,11 +187,110 @@ def menu_principal():
             menu_alunos()
         elif opcao == "2":
             menu_professores()
-                
+            
+        elif opcao == "3":
+            menu_relatorios()
+            
         elif opcao == "0":
             print("Saindo...")
             break
 
+def menu_relatorios():
+    """Menu de Relatórios Gerenciais - BI do Sistema"""
+    while True:
+        print("\n=== RELATÓRIOS GERENCIAIS ===")
+        print("1. 📊 Total de Alunos por Estilo")
+        print("2. 👨‍🏫 Total de Professores por Matéria")
+        print("3. 👥 Alunos por Professor")
+        print("4. 📈 Resumo Executivo")
+        print("0. ⬅️  Voltar")
+        
+        relatorio_op = input("\nEscolha um relatório: ")
+
+        try:
+            if relatorio_op == "1":
+                dados = database.relatorio_alunos_por_estilo()
+                if dados:
+                    print("\n--- 📊 TOTAL DE ALUNOS POR ESTILO ---")
+                    total_geral = 0
+                    for estilo, total in dados:
+                        print(f"  {estilo.upper()}: {total} alunos")
+                        total_geral += total
+                    print(f"\n  ✅ Total de Alunos: {total_geral}")
+                else:
+                    print("❌ Nenhum dado disponível.")
+
+            elif relatorio_op == "2":
+                dados = database.relatorio_professores_por_materia()
+                if dados:
+                    print("\n--- 👨‍🏫 TOTAL DE PROFESSORES POR MATÉRIA ---")
+                    total_professores = 0
+                    for materia, total in dados:
+                        print(f"  {materia.upper()}: {total} professor(es)")
+                        total_professores += total
+                    print(f"\n  ✅ Total de Professores: {total_professores}")
+                else:
+                    print("❌ Nenhum dado disponível.")
+
+            elif relatorio_op == "3":
+                dados = database.relatorio_alunos_por_professor()
+                if dados:
+                    print("\n--- 👥 ALUNOS POR PROFESSOR ---")
+                    professor_atual = None
+                    contador = 0
+                    for professor, aluno, estilo in dados:
+                        if professor_atual != professor:
+                            if professor_atual is not None:
+                                print()
+                            professor_atual = professor
+                            contador = 1
+                            print(f"\n  📌 Professor: {professor}")
+                        print(f"     {contador}. {aluno} ({estilo})")
+                        contador += 1
+                else:
+                    print("❌ Nenhuma matrícula registrada ainda.")
+
+            elif relatorio_op == "4":
+                print("\n--- 📈 RESUMO EXECUTIVO ---")
+                
+                # Total de alunos
+                alunos = database.listar_alunos()
+                total_alunos = len(alunos)
+                
+                # Total de professores
+                professores = database.listar_professores()
+                total_professores = len(professores)
+                
+                # Distribuição por estilo
+                estilo_dados = database.resumo_por_estilo()
+                
+                # Distribuição por professor
+                prof_dados = database.alunos_por_professor()
+                
+                print(f"\n  📊 MÉTRICAS GERAIS:")
+                print(f"     • Total de Alunos: {total_alunos}")
+                print(f"     • Total de Professores: {total_professores}")
+                print(f"     • Estilos Cadastrados: {len(estilo_dados)}")
+                
+                if estilo_dados:
+                    estilo_top = max(estilo_dados, key=lambda x: x[1])
+                    print(f"     • Estilo Mais Popular: {estilo_top[0]} ({estilo_top[1]} alunos)")
+                
+                if prof_dados:
+                    prof_top = max(prof_dados, key=lambda x: x[2])
+                    print(f"     • Professor com Mais Alunos: {prof_top[1]} ({prof_top[2]} alunos)")
+                
+                print()
+
+            elif relatorio_op == "0":
+                break
+            else:
+                print("❌ Opção inválida!")
+                
+        except Exception as e:
+            print(f"❌ Erro ao gerar relatório: {e}")
+        
+        input("\n(Pressione ENTER para continuar...)")
+
 if __name__ == "__main__":
     menu_principal()
-## Uma função para atualizar o estilo de um aluno
