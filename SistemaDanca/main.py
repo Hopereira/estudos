@@ -175,6 +175,7 @@ def menu_principal():
         print("\n=== SISTEMA ESCOLA DE DANÇA ===")
         print("1. Gerenciar Alunos")
         print("2. Gerenciar Professores")
+        print("3. Relatórios Gerenciais")
         print("0. Sair")
         opcao = input("Escolha uma das opções: ")
         try:            
@@ -188,6 +189,34 @@ def menu_principal():
             menu_alunos()
         elif opcao == "2":
             menu_professores()
+            
+        elif opcao == "3":
+            print("\n--- RELATÓRIOS GERENCIAIS ---")
+            print("1. Total de Alunos por Estilo")
+            print("2. Total de Professores por Matéria")
+            print("3. Alunos por Professor")
+            print("0. Voltar")
+            relatorio_op = input("Escolha um relatório: ")
+
+            dados = database.relatorio_alunos_por_estilo()
+                        
+            if relatorio_op == "1":
+                dados = database.relatorio_alunos_por_estilo()
+                print("\nTotal de Alunos por Estilo:")
+                for estilo, total in dados:
+                    print(f"{estilo}: {total} alunos")
+            
+            elif relatorio_op == "2":
+                dados = database.relatorio_professores_por_materia()
+                print("\nTotal de Professores por Matéria:")
+                for materia, total in dados:
+                    print(f"{materia}: {total} professores")
+            
+            elif relatorio_op == "3":
+                dados = database.relatorio_alunos_por_professor()
+                print("\nAlunos por Professor:")
+                for professor, aluno, estilo in dados:
+                    print(f"Professor: {professor} | Aluno: {aluno} | Estilo: {estilo}")
                 
         elif opcao == "0":
             print("Saindo...")

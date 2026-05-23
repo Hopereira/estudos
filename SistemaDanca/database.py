@@ -216,3 +216,45 @@ def pesquisar_professores(termo):
         if conn:
             conn.close()
     return dados
+
+def resumo_por_estilo(conn):
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT modalidade, COUNT(*) as total
+        FROM alunos
+        GROUP BY modalidade
+    """)
+
+    return cursor.fetchall()
+
+def alunos_por_professor(conn):
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT professores.nome, COUNT(aluno.id) as total
+        FROM aluno
+        JOIN professores
+        ON alunos.professor_id = professores.id
+        GROUP BY professores.nome
+    """)
+
+    return cursor.fetchall()
+
+import sqlite3
+
+def relatorio_alunos_por_estilo():
+    conexao = sqlite3.connect("sistema.db")
+    cursor = conexao.cursor()
+
+    cursor.execute("""
+        SELECT estilo, COUNT(*)
+        FROM aluno
+        GROUP BY estilo
+    """)
+
+    dados = cursor.fetchall()
+
+    conexao.close()
+
+    return dados
