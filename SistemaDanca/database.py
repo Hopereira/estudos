@@ -182,3 +182,37 @@ def remover_professor(id_professor):
     finally:
         if conn:
             conn.close()
+            
+def realizar_matricula(id_aluno, id_professor, estilo_escolhido):
+    conn = None
+    try:
+        conn = obter_conexao()
+        cursor = conn.cursor()
+        cursor.execute('INSERT INTO matriculas (id_aluno, id_professor, estilo_escolhido) VALUES (?, ?, ?)', 
+                       (id_aluno, id_professor, estilo_escolhido))
+        conn.commit()
+        print("✅ Matrícula realizada com sucesso!")
+    except sqlite3.IntegrityError:
+        print("❌ Erro: Aluno ou professor não encontrado. Verifique os IDs e tente novamente.")
+    except sqlite3.Error as e:
+        print(f"Erro ao realizar matrícula: {e}")
+    finally:
+        if conn:
+            conn.close()
+            
+def pesquisar_professores(termo):
+    conn = None
+    dados = []
+    try:        
+        conn = obter_conexao()
+        cursor = conn.cursor()
+        filtro = f"%{termo}%"
+        cursor.execute("SELECT * FROM professores WHERE nome LIKE ? OR materia LIKE ? OR estilo_principal LIKE ?", 
+                       (filtro, filtro, filtro))
+        dados = cursor.fetchall()
+    except sqlite3.Error as e:
+        print(f"Erro ao pesquisar professores: {e}")
+    finally:
+        if conn:
+            conn.close()
+    return dados
