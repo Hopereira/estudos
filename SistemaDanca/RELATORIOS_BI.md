@@ -70,11 +70,11 @@ Acessível via **opção 3** do menu principal:
 
 ```
 === RELATÓRIOS GERENCIAIS ===
-1. 📊 Total de Alunos por Estilo
-2. 👨‍🏫 Total de Professores por Matéria
-3. 👥 Alunos por Professor
-4. 📈 Resumo Executivo
-0. ⬅️  Voltar
+1.  Total de Alunos por Estilo
+2.  Total de Professores por Matéria
+3.  Alunos por Professor
+4.  Resumo Executivo
+0.  Voltar
 ```
 
 ### Relatório 1: Alunos por Estilo
@@ -100,7 +100,7 @@ Dashboard com métricas consolidadas:
 
 ### Exemplo 1: Total de Alunos por Estilo
 ```
---- 📊 TOTAL DE ALUNOS POR ESTILO ---
+---  TOTAL DE ALUNOS POR ESTILO ---
   SAMBA: 5 alunos
   FORRÓ: 3 alunos
   PAGODE: 2 alunos
@@ -109,7 +109,7 @@ Dashboard com métricas consolidadas:
 
 ### Exemplo 2: Alunos por Professor
 ```
---- 👥 ALUNOS POR PROFESSOR ---
+--- ALUNOS POR PROFESSOR ---
   📌 Professor: Maria Silva
      1. João Pedro (Samba)
      2. Ana Santos (Pagode)
@@ -121,8 +121,8 @@ Dashboard com métricas consolidadas:
 
 ### Exemplo 3: Resumo Executivo
 ```
---- 📈 RESUMO EXECUTIVO ---
-  📊 MÉTRICAS GERAIS:
+--- RESUMO EXECUTIVO ---
+    MÉTRICAS GERAIS:
      • Total de Alunos: 12
      • Total de Professores: 4
      • Estilos Cadastrados: 3
@@ -161,38 +161,4 @@ Execute o script de teste para validar todas as funções:
 python teste_relatorios.py
 ```
 
-Saída esperada:
-```
-=== TESTE DAS FUNÇÕES DE RELATÓRIO ===
-1️⃣  Testando resumo_por_estilo()
-2️⃣  Testando alunos_por_professor()
-3️⃣  Testando relatorio_professores_por_materia()
-4️⃣  Testando relatorio_alunos_por_professor()
-✅ Testes concluídos!
-```
 
----
-
-## 📝 Notas Técnicas
-
-- ✅ Todas as funções usam `try-except-finally` para tratamento de erros
-- ✅ Suporte a 0 registros (retorna listas vazias sem erros)
-- ✅ Consultas otimizadas com `ORDER BY` para melhor visualização
-- ✅ Uso de `LEFT JOIN` para professores sem alunos ainda
-- ✅ Interface amigável com emojis e formatação clara
-
----
-
-## 🚀 Próximas Melhorias
-
-- [ ] Exportar relatórios em CSV/PDF
-- [ ] Gráficos visuais com matplotlib
-- [ ] Filtros por período (data)
-- [ ] Comparativos período a período
-- [ ] Alertas de professores ociosos
-
----
-
-**Desenvolvido**: 23 de Maio de 2026  
-**Branch**: feature-14-relatorios-bi  
-**Status**: ✅ Completo e Testado
