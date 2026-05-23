@@ -6,7 +6,8 @@ def menu_alunos():
         print("1. Cadastrar Aluno")
         print("2. Listar Alunos")
         print("3. Remover Aluno")
-        print("4. Atualizar Estilo")  # <--- Nova opção!
+        print("4. Atualizar Estilo")
+        print("5. Pesquisar Alunos")
         print("0. Voltar")
         
         op = input("Escolha: ")
@@ -45,15 +46,15 @@ def menu_alunos():
             database.remover_aluno(id_remover)
             print("Removido!")
 
-        elif op == "4":  # <--- A lógica para chamar o seu update
+        elif op == "4":  # Atualizar estilo do aluno
             id_aluno = input("Digite o ID do aluno: ")
-            try:               
+            try:
                 if not id_aluno.isdigit():
                     raise ValueError("O ID deve ser um número inteiro.")
             except ValueError as e:
                 print(f"Erro: {e}")
                 continue
-            
+
             novo_estilo = input("Digite o novo estilo: ")
             try:
                 if not novo_estilo.replace(" ", "").isalpha():
@@ -63,7 +64,23 @@ def menu_alunos():
                 continue
             database.atualizar_estilo_aluno(id_aluno, novo_estilo)
             print("Estilo atualizado!")
-            
+
+        elif op == "5":
+            termo_pesquisa = input("Digite o termo para pesquisa: ")
+            try:
+                if not termo_pesquisa.replace(" ", "").isalpha():
+                    raise ValueError("O termo de pesquisa deve conter apenas letras e espaços.")
+            except ValueError as e:
+                print(f"Erro: {e}")
+                continue
+            resultados = database.pesquisar_alunos(termo_pesquisa)
+            if resultados:
+                print("\n--- RESULTADOS DA PESQUISA ---")
+                for r in resultados:
+                    print(f"ID: {r[0]} | Nome: {r[1]} | Estilo: {r[2]}")
+            else:
+                print("Nenhum aluno encontrado.")
+
         elif op == "0":
             break
 
@@ -73,6 +90,8 @@ def menu_professores():
         print("1. Cadastrar Professor")
         print("2. Listar Professores")
         print("3. Remover Professor")
+        print("4. Atualizar Estilo do Aluno")
+        print("5. Pesquisar Professores")
         print("0. Voltar")
         op = input("Escolha: ")
 
@@ -130,6 +149,22 @@ def menu_professores():
                 continue
             database.atualizar_estilo_aluno(id_aluno, novo_estilo)
             print("🔄 Estilo atualizado com sucesso!")
+            
+        elif op == "5":
+            termo_pesquisa = input("Digite o termo para pesquisa: ")
+            try:
+                if not termo_pesquisa.replace(" ", "").isalpha():
+                    raise ValueError("O termo de pesquisa deve conter apenas letras e espaços.")    
+            except ValueError as e:
+                print(f" Erro: {e}")
+                continue
+            resultados = database.pesquisar_professores(termo_pesquisa)
+            if resultados:
+                print("\n--- RESULTADOS DA PESQUISA ---")
+                for r in resultados:
+                    print(f"ID: {r[0]} | Nome: {r[1]} | Matéria: {r[2]} | Estilo Principal: {r[3]}")
+            else:
+                print("Nenhum professor encontrado.")
 
         elif op == "0":
             break
@@ -140,7 +175,6 @@ def menu_principal():
         print("\n=== SISTEMA ESCOLA DE DANÇA ===")
         print("1. Gerenciar Alunos")
         print("2. Gerenciar Professores")
-        print("3. Pesquisar alunos")
         print("0. Sair")
         opcao = input("Escolha uma das opções: ")
         try:            
@@ -154,20 +188,6 @@ def menu_principal():
             menu_alunos()
         elif opcao == "2":
             menu_professores()
-            
-        elif opcao == "3":
-            termo_digitado_pelo_usuario = input("Digite o termo para pesquisa: ")
-            try:
-                if not termo_digitado_pelo_usuario.replace(" ", "").isalpha():
-                    raise ValueError("O termo de pesquisa deve conter apenas letras e espaços.")
-            except ValueError as e:
-                print(f"Erro: {e}")
-                continue
-            resultados = database.pesquisar_alunos(termo_digitado_pelo_usuario)
-            if resultados:
-                print("\n--- RESULTADOS DA PESQUISA ---")
-                for r in resultados:
-                    print(f"ID: {r[0]} | Nome: {r[1]} | Estilo: {r[2]}")
                 
         elif opcao == "0":
             print("Saindo...")
