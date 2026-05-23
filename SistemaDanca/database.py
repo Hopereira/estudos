@@ -217,44 +217,97 @@ def pesquisar_professores(termo):
             conn.close()
     return dados
 
-def resumo_por_estilo(conn):
-    cursor = conn.cursor()
+# --- FUNÇÕES DE RELATÓRIOS ---
 
-    cursor.execute("""
-        SELECT modalidade, COUNT(*) as total
-        FROM alunos
-        GROUP BY modalidade
-    """)
+def resumo_por_estilo():
+    """Retorna volume de alunos agrupado por estilo de dança (GROUP BY)"""
+    conn = None
+    dados = []
+    try:
+        conn = obter_conexao()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT estilo, COUNT(*) as total_alunos
+            FROM alunos
+            GROUP BY estilo
+            ORDER BY total_alunos DESC
+        """)
+        dados = cursor.fetchall()
+    except sqlite3.Error as e:
+        print(f"❌ Erro ao gerar relatório por estilo: {e}")
+    finally:
+        if conn:
+            conn.close()
+    return dados
 
-    return cursor.fetchall()
-
-def alunos_por_professor(conn):
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT professores.nome, COUNT(aluno.id) as total
-        FROM aluno
-        JOIN professores
-        ON alunos.professor_id = professores.id
-        GROUP BY professores.nome
-    """)
-
-    return cursor.fetchall()
-
-import sqlite3
+def alunos_por_professor():
+    """Retorna quantidade de alunos para cada professor (JOIN + GROUP BY)"""
+    conn = None
+    dados = []
+    try:
+        conn = obter_conexao()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT p.id, p.nome, COUNT(m.id_aluno) as total_alunos
+            FROM professores p
+            LEFT JOIN matriculas m ON p.id = m.id_professor
+            GROUP BY p.id, p.nome
+            ORDER BY total_alunos DESC
+        """)
+        dados = cursor.fetchall()
+    except sqlite3.Error as e:
+        print(f"❌ Erro ao gerar relatório de alunos por professor: {e}")
+    finally:
+        if conn:
+            conn.close()
+    return dados
 
 def relatorio_alunos_por_estilo():
-    conexao = sqlite3.connect("sistema.db")
-    cursor = conexao.cursor()
+    """Relatório de total de alunos por estilo"""
+    return resumo_por_estilo()
 
-    cursor.execute("""
-        SELECT estilo, COUNT(*)
-        FROM aluno
-        GROUP BY estilo
-    """)
+def relatorio_professores_por_materia():
+    """Retorna quantidade de professores por matéria"""
+    conn = None
+    dados = []
+    try:
+        conn = obter_conexao()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT materia, COUNT(*) as total_professores
+            FROM professores
+            GROUP BY materia
+            ORDER BY total_professores DESC
+        """)
+        dados = cursor.fetchall()
+    except sqlite3.Error as e:
+        print(f"❌ Erro ao gerar relatório de professores por matéria: {e}")
+    finally:
+        if conn:
+            conn.close()
+    return dados
 
-    dados = cursor.fetchall()
-
-    conexao.close()
-
+def relatorio_alunos_por_professor():
+    """Relatório detalhado de alunos vinculados a cada professor"""
+    conn = None
+    dados = []
+    try:
+        conn = obter_conexao()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT 
+                p.nome as professor,
+                a.nome as aluno,
+                m.estilo_escolhido
+            FROM matriculas m
+            JOIN professores p ON m.id_professor = p.id
+            JOIN alunos a ON m.id_aluno = a.id
+            ORDER BY p.nome, a.nome
+        """)
+        dados = cursor.fetchall()
+    except sqlite3.Error as e:
+        print(f"❌ Erro ao gerar relatório detalhado: {e}")
+    finally:
+        if conn:
+            conn.close()
     return dados
