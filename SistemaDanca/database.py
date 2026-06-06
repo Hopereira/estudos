@@ -4,6 +4,10 @@ import sqlite3
 class AlunoDuplicadoError(Exception):
     pass
 
+def obter_conexao():
+    """Obtém uma conexão com o banco de dados SQLite"""
+    return sqlite3.connect('escola_danca.db')
+
 def iniciar_banco():
     conexao = None
     try:
