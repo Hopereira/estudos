@@ -3,14 +3,6 @@ import sqlite3
 class AlunoDuplicadoError(Exception):
     pass
 
-# =====================================================================
-# 🛠️ A SOLUÇÃO DO SEU ERRO ESTÁ AQUI: Criação da função que faltava!
-# =====================================================================
-def obter_conexao():
-    """Abre e retorna a conexão com o banco de dados SQLite"""
-    return sqlite3.connect("escola_danca.db")
-
-
 def iniciar_banco():
     conexao = None
     try:
