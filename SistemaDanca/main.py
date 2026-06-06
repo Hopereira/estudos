@@ -253,32 +253,36 @@ def menu_relatorios():
             elif relatorio_op == "4":
                 print("\n--- 📈 RESUMO EXECUTIVO ---")
                 
-                # Total de alunos
                 alunos = database.listar_alunos()
-                total_alunos = len(alunos)
+                total_alunos = len(alunos) if alunos else 0
                 
-                # Total de professores
                 professores = database.listar_professores()
-                total_professores = len(professores)
+                total_professores = len(professores) if professores else 0
                 
-                # Distribuição por estilo
                 estilo_dados = database.resumo_por_estilo()
+                total_estilos = len(estilo_dados) if estilo_dados else 0
                 
-                # Distribuição por professor
+            
                 prof_dados = database.alunos_por_professor()
                 
                 print(f"\n  📊 MÉTRICAS GERAIS:")
                 print(f"     • Total de Alunos: {total_alunos}")
                 print(f"     • Total de Professores: {total_professores}")
-                print(f"     • Estilos Cadastrados: {len(estilo_dados)}")
+                print(f"     • Estilos Ativos: {total_estilos}")
                 
+                # Exibe o estilo mais popular apenas se houver dados
                 if estilo_dados:
                     estilo_top = max(estilo_dados, key=lambda x: x[1])
-                    print(f"     • Estilo Mais Popular: {estilo_top[0]} ({estilo_top[1]} alunos)")
+                    print(f"     • Estilo Mais Popular: {estilo_top[0].upper()} ({estilo_top[1]} alunos)")
+                else:
+                    print("     • Estilo Mais Popular: Nenhum estilo registrado")
                 
+                # Exibe o professor mais popular apenas se houver dados (Proteção contra NameError)
                 if prof_dados:
                     prof_top = max(prof_dados, key=lambda x: x[2])
                     print(f"     • Professor com Mais Alunos: {prof_top[1]} ({prof_top[2]} alunos)")
+                else:
+                    print("     • Professor com Mais Alunos: Nenhum professor registrado")
                 
                 print()
 
