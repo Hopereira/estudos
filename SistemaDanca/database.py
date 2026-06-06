@@ -1,12 +1,7 @@
 import sqlite3
 
-
 class AlunoDuplicadoError(Exception):
     pass
-
-def obter_conexao():
-    """Obtém uma conexão com o banco de dados SQLite"""
-    return sqlite3.connect('escola_danca.db')
 
 def iniciar_banco():
     conexao = None
@@ -70,20 +65,14 @@ def criar_tabelas():
 # --- FUNÇÕES DE ALUNOS ---
 
 def salvar_aluno(nome, estilo):
-    conn = sqlite3.connect('escola_danca.db')
+    # Corrigido para usar obter_conexao() para manter o padrão e evitar conflitos
+    conn = obter_conexao()
     cursor = conn.cursor()
     cursor.execute('SELECT 1 FROM alunos WHERE LOWER(nome) = LOWER(?)', (nome,))
     if cursor.fetchone() is not None:
         conn.close()
         raise AlunoDuplicadoError(f"Aluno '{nome}' ja esta cadastrado.")
     cursor.execute('INSERT INTO alunos (nome, estilo) VALUES (?, ?)', (nome, estilo))
-    conn.commit()
-    conn.close()
-
-def salvar_professor(nome, materia, estilo):
-    conn = sqlite3.connect('escola_danca.db')
-    cursor = conn.cursor()
-    cursor.execute('INSERT INTO professores (nome, materia, estilo_principal) VALUES (?, ?, ?)', (nome, materia, estilo))
     conn.commit()
     conn.close()
 
@@ -229,47 +218,53 @@ def pesquisar_professores(termo):
 # --- FUNÇÕES DE RELATÓRIOS ---
 
 def resumo_por_estilo():
-    """Retorna volume de alunos agrupado por estilo de dança (GROUP BY)"""
-    conn = None
-    dados = []
+    """
+    Objetivo 1: Fornece o estilo e a contagem de alunos vinculados.
+    Alimenta o cálculo de 'Estilo Mais Popular' no Resumo Executivo.
+    """
+    conexao = None
+    resultado = []
     try:
-        conn = obter_conexao()
-        cursor = conn.cursor()
+        conexao = obter_conexao()  
+        cursor = conexao.cursor()
+        
         cursor.execute("""
-            SELECT estilo, COUNT(*) as total_alunos
-            FROM alunos
-            GROUP BY estilo
-            ORDER BY total_alunos DESC
+            SELECT estilo_escolhido, COUNT(id) 
+            FROM matriculas 
+            GROUP BY estilo_escolhido
         """)
-        dados = cursor.fetchall()
+        resultado = cursor.fetchall()
     except sqlite3.Error as e:
-        print(f"❌ Erro ao gerar relatório por estilo: {e}")
+        print(f"❌ Erro ao gerar resumo por estilo: {e}")
     finally:
-        if conn:
-            conn.close()
-    return dados
+        if conexao:
+            conexao.close()
+    return resultado
 
 def alunos_por_professor():
-    """Retorna quantidade de alunos para cada professor (JOIN + GROUP BY)"""
-    conn = None
-    dados = []
+    """
+    Objetivo 2: Retorna o ID, o Nome do professor e o total de alunos associados.
+    Garante visibilidade gerencial sobre professores sem turmas usando LEFT JOIN.
+    """
+    conexao = None
+    resultado = []
     try:
-        conn = obter_conexao()
-        cursor = conn.cursor()
+        conexao = obter_conexao()  
+        cursor = conexao.cursor()
+        
         cursor.execute("""
-            SELECT p.id, p.nome, COUNT(m.id_aluno) as total_alunos
-            FROM professores p
-            LEFT JOIN matriculas m ON p.id = m.id_professor
-            GROUP BY p.id, p.nome
-            ORDER BY total_alunos DESC
+            SELECT professores.id, professores.nome, COUNT(matriculas.id)
+            FROM professores
+            LEFT JOIN matriculas ON matriculas.id_professor = professores.id
+            GROUP BY professores.id
         """)
-        dados = cursor.fetchall()
+        resultado = cursor.fetchall()
     except sqlite3.Error as e:
-        print(f"❌ Erro ao gerar relatório de alunos por professor: {e}")
+        print(f"❌ Erro ao gerar alunos por professor: {e}")
     finally:
-        if conn:
-            conn.close()
-    return dados
+        if conexao:
+            conexao.close()
+    return resultado
 
 def relatorio_alunos_por_estilo():
     """Relatório de total de alunos por estilo"""
